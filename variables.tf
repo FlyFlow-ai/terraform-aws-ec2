@@ -21,17 +21,17 @@ variable "cluster_name" {
 }
 
 variable "ami_id" {
-  type        = string
-  default     = "ami-053e7be1410d7eb72"
+  type    = string
+  default = "ami-053e7be1410d7eb72"
 }
 variable "storage" {
-  type        = object({
+  type = object({
     root_volume_size      = number
-    delete_on_termination     = bool
+    delete_on_termination = bool
 
   })
   default = {
-    root_volume_size = 8
+    root_volume_size      = 8
     delete_on_termination = false
   }
 }
@@ -59,7 +59,7 @@ variable "iam_instance_profile_name" {
 }
 
 variable "managed_policy_arns" {
-  type    = list(string)
+  type = list(string)
   default = [
     "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
   ]
