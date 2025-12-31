@@ -1,28 +1,32 @@
-
-# IAM Role and Policy for ECS
 resource "aws_iam_role" "ecs_instance_role" {
-  name = "ecsInstanceRoleFinal"
+  count = var.create_iam ? 1 : 0
+  name  = "ecsInstanceRoleFinal"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
+    Statement = [{
+      Effect = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action = "sts:AssumeRole"
+    }]
   })
 }
 
 resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "ecsInstanceProfile"
-  role = aws_iam_role.ecs_instance_role.name
+  count = var.create_iam ? 1 : 0
+  name  = "ecsInstanceProfile"
+  role  = aws_iam_role.ecs_instance_role[0].name
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_instance_policy" {
-  role       = aws_iam_role.ecs_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+resource "aws_iam_role_policy_attachment" "attachments" {
+  for_each = var.create_iam ? toset(var.managed_policy_arns) : toset([])
+
+  role       = aws_iam_role.ecs_instance_role[0].name
+  policy_arn  = each.value
+}
+
+locals {
+  instance_profile_name = var.create_iam
+    ? aws_iam_instance_profile.ecs_instance_profile[0].name
+    : var.iam_instance_profile_name
 }

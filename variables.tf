@@ -41,3 +41,26 @@ variable "user_data" {
   type        = string
   default     = null
 }
+
+variable "security_group_ids" {
+  description = "Security group IDs to attach"
+  type        = list(string)
+}
+
+variable "create_iam" {
+  type    = bool
+  default = true
+}
+
+variable "iam_instance_profile_name" {
+  type        = string
+  default     = null
+  description = "When create_iam=false, pass existing instance profile name"
+}
+
+variable "managed_policy_arns" {
+  type    = list(string)
+  default = [
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+  ]
+}
